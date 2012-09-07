@@ -1,9 +1,9 @@
 <?php
 /*
 Plugin Name: Scripted API
-Plugin URI: http://www.scripted.com/
-Description: Scripted API implementation
-Author: Abdul Jamal
+Plugin URI: https://Scripted.com/
+Description: Manage your Scripted account within WordPress!
+Author: Scripted, Inc.
 Version: 0.1.1
 Author URI: http://www.mogambooo.com/
 */

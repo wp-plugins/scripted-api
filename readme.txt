@@ -1,7 +1,7 @@
-=== Scripted Content Writing ===
+=== Scripted.com Expert Blogger API ===
 Contributors: rbucks
 Donate link: 
-Tags: writing, blog posts, twitter, tweet, hire blogger, hire writer, custom content
+Tags: writing, blog posts, twitter, tweet, hire blogger, hire writer, custom content, scripted.com, expert writer, scripted
 Requires at least: 3.3
 Tested up to: 3.4
 Stable tag: 1.0
@@ -38,8 +38,3 @@ See our frequently asked questions here: [https://Scripted.com/faq](https://Scri
 
 
 == Upgrade notice ==
-
-
-
-== Arbitrary section 1 ==
-
