@@ -2,10 +2,10 @@
 /*
 Plugin Name: Scripted API
 Plugin URI: https://Scripted.com/
-Description: Manage your Scripted account within WordPress!
-Author: Scripted, Inc.
+Description: Manage your Scripted account from WordPress!
+Author: Scripted.com
 Version: 0.1.1
-Author URI: http://www.mogambooo.com/
+Author URI: https://Scripted.com/
 */
 
 class WP_Scripted {
