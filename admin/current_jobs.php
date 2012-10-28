@@ -57,7 +57,6 @@ function scripted_create_current_jobs_callback()
         $out .='<table cellspacing="0" class="wp-list-table widefat fixed pages">
                     <thead>
                         <tr>
-                        <th style="" class="manage-column column-author" scope="col"><span>ID</span></th>
                         <th style="" class="manage-column column-author"scope="col"><span>Topic</span></th>
                         <th style="" class="manage-column column-author"scope="col"><span>State</span></th>
                         <th style="" class="manage-column column-author"scope="col"><span>Deadline</span></th>
@@ -71,10 +70,9 @@ function scripted_create_current_jobs_callback()
             
             foreach($currentJobs as $job) {
                 $out .='<tr valign="top" class="scripted type-page status-publish hentry alternate">
-                    <td class="author column-author">'.$job->id.'</td>
                     <td class="author column-author"><strong>'.$job->topic.'</strong></td>
                     <td class="author column-author">'.$job->state.'</td>
-                    <td class="author column-author">'.$job->deadline_at.'</td>
+                    <td class="author column-author">'.date('F j', strtotime($job->deadline_at)).'</td>
                     </tr>';
             }
             

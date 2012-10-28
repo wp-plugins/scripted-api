@@ -58,10 +58,9 @@ function scripted_create_finished_jobs_callback()
         $out .='<table cellspacing="0" class="wp-list-table widefat fixed pages">
                     <thead>
                         <tr>
-                        <th class="manage-column column-tags" scope="col"><span>ID</span></th>
                         <th class="manage-column column-author" scope="col"><span>Topic</span></th>
                         <th class="manage-column column-author" scope="col"><span>State</span></th>
-                        <th class="manage-column column-author" scope="col"></th>
+                        <th class="manage-column column-author" scope="col">WordPress</th>
                         </tr>
                     </thead>
                       <tbody id="the-list">
@@ -72,7 +71,6 @@ function scripted_create_finished_jobs_callback()
             $i = 1;
             foreach($finishedJobs as $job) {
                 $out .='<tr valign="top" class="scripted type-page status-publish hentry alternate">
-                    <td>'.$job->id.'</td><input type="hidden" id="project_'.$i.'" value="'.$job->id.'">
                     <td class="author column-author"><strong>'.$job->topic.'</strong></td>
                     <td class="author column-author">'.$job->state.'</td>
                     <td class="author column-author"><span  id="create_'.$job->id.'"><a href="javascript:void(0)" onclick="createProject('.$i.')">Create Draft</a></span></td>
@@ -148,6 +146,7 @@ function createScriptedProject()
                 $post['post_author']    = $userID;
                 $post['post_type']      = 'post';
                 $post['post_content']   = $_projectContent->content;
+				$post['post_content']   .= '<p style="font-style:italic; font-size: 10px;">Powered by <a href="https://Scripted.com" alt="Scripted.com content marketing automation">Scripted.com</a> content automation</p>';
                 $post_id = wp_insert_post($post ,true);
                 echo 'Draft Created!';
             }
