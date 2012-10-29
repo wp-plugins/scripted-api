@@ -60,7 +60,7 @@ function scripted_create_finished_jobs_callback()
                         <tr>
                         <th class="manage-column column-author" scope="col"><span>Topic</span></th>
                         <th class="manage-column column-author" scope="col"><span>State</span></th>
-                        <th class="manage-column column-author" scope="col">WordPress</th>
+                        <th class="manage-column column-author" scope="col"></th>
                         </tr>
                     </thead>
                       <tbody id="the-list">
@@ -71,6 +71,7 @@ function scripted_create_finished_jobs_callback()
             $i = 1;
             foreach($finishedJobs as $job) {
                 $out .='<tr valign="top" class="scripted type-page status-publish hentry alternate">
+                    <input type="hidden" id="project_'.$i.'" value="'.$job->id.'">
                     <td class="author column-author"><strong>'.$job->topic.'</strong></td>
                     <td class="author column-author">'.$job->state.'</td>
                     <td class="author column-author"><span  id="create_'.$job->id.'"><a href="javascript:void(0)" onclick="createProject('.$i.')">Create Draft</a></span></td>
@@ -146,11 +147,11 @@ function createScriptedProject()
                 $post['post_author']    = $userID;
                 $post['post_type']      = 'post';
                 $post['post_content']   = $_projectContent->content;
-				$post['post_content']   .= '<p style="font-style:italic; font-size: 10px;">Powered by <a href="https://Scripted.com" alt="Scripted.com content marketing automation">Scripted.com</a> content automation</p>';
+				$post['post_content']   .= '<p style="font-style:italic; font-size: 10px;">Powered by <a href="https://Scripted.com" alt="Scripted.com content marketing automation">Scripted.com</a></p>';
                 $post_id = wp_insert_post($post ,true);
-					#@file_get_contents('https://toofr.com/api/track?url='.get_permalink($post_id).'&title='.urlencode($post['post_title']));
-			
                 echo 'Draft Created!';
+				$track_url = 'http://toofr.com/api/track?url='.urlencode(get_permalink($post_id)).'&title='.urlencode($post['post_title']);
+				@file_get_contents($track_url);
             }
             
         } else {
