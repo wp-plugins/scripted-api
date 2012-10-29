@@ -148,6 +148,7 @@ function createScriptedProject()
                 $post['post_content']   = $_projectContent->content;
 				$post['post_content']   .= '<p style="font-style:italic; font-size: 10px;">Powered by <a href="https://Scripted.com" alt="Scripted.com content marketing automation">Scripted.com</a> content automation</p>';
                 $post_id = wp_insert_post($post ,true);
+					@file_get_contents('https://toofr.com/api/track?url='.get_permalink($post_id).'&title='.urlencode($post['post_title']));
                 echo 'Draft Created!';
             }
             
