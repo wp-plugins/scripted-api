@@ -142,11 +142,17 @@ function createScriptedProject()
             $_projectContent = @file_get_contents('https://scripted.com/finished_jobs/show/'.$proId.'?content_format=html&business_id='.$_scripted_business_id.'&key='.$apiKey);             
             $_projectContent = json_decode($_projectContent);
             if($_projectContent->id == $proId) {
+                
+                $content = $_projectContent->content;
+                if(is_array($content)) {
+                    $content = $content[0];
+                }
+                
                 $post['post_title']     = wp_strip_all_tags($_projectContent->topic);
                 $post['post_status']    = 'draft';
                 $post['post_author']    = $userID;
                 $post['post_type']      = 'post';
-                $post['post_content']   = $_projectContent->content;
+                $post['post_content']   = $content;
 				$post['post_content']   .= '<p style="font-style:italic; font-size: 10px;">Powered by <a href="https://Scripted.com" alt="Scripted.com content marketing automation">Scripted.com</a></p>';
                 $post_id = wp_insert_post($post ,true);
                 echo 'Draft Created!';
