@@ -101,7 +101,7 @@ function scripted_create_finished_jobs_callback()
                         }elseif(in_array($job->state, ifStatusInCreateDraftFunction()))
                                 $out .= '<a id="create_'.$job->id.'" href="javascript:void(0)"  onclick="finishedProjectActions(\''.$job->id.'\',\'Create\')">Create Draft</a> | ';
 
-                        $out .= '<a href="'.admin_url('admin-ajax.php').'?action=scripted_poject_finished&do=view_project&project_id='.$job->id.'&secure='.wp_create_nonce('view_project').'&amp;type=page&amp;TB_iframe=1&amp;width=850&amp;height=650" class="thickbox" title="'.strip_tags(substr($job->topic,0,50)).'">View</a>';
+                        $out .= '<a href="'.admin_url('admin-ajax.php').'?action=scripted_poject_finished&do=view_project&project_id='.$job->id.'&secure='.wp_create_nonce('view_project').'&amp;type=page&amp;TB_iframe=1&amp;width=850&amp;height=500" class="thickbox" title="'.strip_tags(substr($job->topic,0,50)).'">View</a>';
                     }
              
                    $out .='</td></tr>';
