@@ -27,6 +27,11 @@ function admin_dialog($message, $error = false) {
 	
 	echo '<div ' . ( $error ? 'id="scripted_warning" ' : '') . 'class="' . $class . ' fade' . '"><p>'. $message . '</p></div>';
 }
+function scripted_admin_styles() {
+    wp_register_style( 'scripteAdminStyle', plugins_url('admin/scripts/scripted.css', SCRIPTED_FILE_URL) );
+    wp_enqueue_style( 'scripteAdminStyle' );
+}
+
 function scripted_settings_menu() {
    add_menu_page('scripted_settings', 'Settings', 'add_users','scripted_settings_menu', 'scripted_settings_menu_function', SCRIPTED_ICON, 83);
    
@@ -36,9 +41,16 @@ function scripted_settings_menu() {
     if($apiKey != '' and $_scripted_business_id !='') {
 	$createAJobPage = add_submenu_page( 'scripted_settings_menu', 'Create a Job', 'Create a Job', 'manage_options', 'scripted_create_a_job', 'scripted_create_a_job_callback' ); 
         add_action( 'admin_footer-'. $createAJobPage, 'getFormFields' );
-        add_submenu_page( 'scripted_settings_menu', 'Current Jobs', 'Current Jobs', 'manage_options', 'scripted_create_current_jobs', 'scripted_create_current_jobs_callback' );
+        $currentJobPage = add_submenu_page( 'scripted_settings_menu', 'Current Jobs', 'Current Jobs', 'manage_options', 'scripted_create_current_jobs', 'scripted_create_current_jobs_callback' );
         $finishedPage = add_submenu_page( 'scripted_settings_menu', 'Finished Jobs', 'Finished Jobs', 'manage_options', 'scripted_create_finished_jobs', 'scripted_create_finished_jobs_callback' );
+        
+        // javascript functions
         add_action( 'admin_footer-'. $finishedPage, 'createProjectAjax' );
+        
+        //adding style sheet to admin pages
+        add_action( 'admin_print_styles-' . $createAJobPage, 'scripted_admin_styles' );
+        add_action( 'admin_print_styles-' . $finishedPage, 'scripted_admin_styles' );
+        add_action( 'admin_print_styles-' . $currentJobPage, 'scripted_admin_styles' );
     }
 }
 function scripted_settings_menu_function() {
@@ -91,6 +103,7 @@ You can think of your business_id as your username, and your key as your passwor
 function validateApiKey($apiKey,$businessId)
 {
    $_currentJobs = @file_get_contents('https://scripted.com/jobs?key='.$apiKey.'&business_id='.$businessId); 
+   return true;
    if($_currentJobs != '') {
         $_currentJobs = json_decode($_currentJobs);
         if(isset($_currentJobs->total)) {
