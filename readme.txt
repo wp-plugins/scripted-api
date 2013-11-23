@@ -4,7 +4,7 @@ Donate link:
 Tags: writing, blog posts, twitter, tweet, hire blogger, hire writer, custom content, scripted.com, expert writer, scripted
 Requires at least: 3.3
 Tested up to: 3.7.1
-Stable tag: 0.2.1
+Stable tag: 0.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
