@@ -71,7 +71,7 @@ function scripted_settings_menu_function() {
    $out .='<p>Authentication is required for many functions of the Scripted API. We use token-based authentication.<br />
 You can think of your business_id as your username, and your key as your password.</p>';
    
-   $out .='<p>To get your Business ID and key, please register or log in at Scripted.com, and go to https://app.scripted.com/api. Your credentials will show at the top of this page.</p>';
+   $out .='<p>To get your Business ID and key, please register or log in at Scripted.com, and go to https://Scripted.com/api. Your credentials will show at the top of this page.</p>';
             
    $out .='<form action="" method="post" name="scripted_settings">'.wp_nonce_field( 'scriptedFormAuthSettings', '_wpnonce' );
    
@@ -102,7 +102,7 @@ You can think of your business_id as your username, and your key as your passwor
 }
 function validateApiKey($apiKey,$businessId)
 {
-   $_currentJobs = @file_get_contents('https://app.scripted.com/jobs?key='.$apiKey.'&token='.$businessId); 
+   $_currentJobs = @file_get_contents('https://scripted.com/jobs?key='.$apiKey.'&business_id='.$businessId); 
    return true;
    if($_currentJobs != '') {
         $_currentJobs = json_decode($_currentJobs);

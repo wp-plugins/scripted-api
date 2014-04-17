@@ -30,7 +30,7 @@ function scripted_create_a_job_callback()
                }
            }
            
-           $urlToSendRequest  = 'https://app.scripted.com/jobs/create?key='.$apiKey.'&sandbox=false&token='.$_scripted_business_id.'&topic='.$topic.$fields;
+           $urlToSendRequest  = 'https://app.scripted.com/jobs/create?key='.$apiKey.'&sandbox=false&business_id='.$_scripted_business_id.'&topic='.$topic.$fields;
            
            if($format_id!= '')
                $urlToSendRequest .= '&format_id='.$format_id;
