@@ -17,7 +17,7 @@ function scripted_create_finished_jobs_callback()
             <div class="icon32" style="width:100px;padding-top:5px;" id="icon-scripted"><img src="'.SCRIPTED_LOGO.'"></div><h2>Finished Jobs <a class="add-new-h2" href="admin.php?page=scripted_create_a_job">Create a Job</a></h2>';
     
     if($validate) {
-        $_finishedJobs = @file_get_contents('https://app.scripted.com/finished_jobs?key='.$apiKey.'&business_id='.$_scripted_business_id.'&page='.$paged.'&per_page='.$per_page.$sorting);            
+        $_finishedJobs = @file_get_contents('https://app.scripted.com/finished_jobs?key='.$apiKey.'&token='.$_scripted_business_id.'&page='.$paged.'&per_page='.$per_page.$sorting);            
         $_finishedJobs = json_decode($_finishedJobs);        
         
         $totalProjects  = $_finishedJobs->total;
@@ -146,7 +146,7 @@ function createScriptedProject($proId,$apiKey,$_scripted_business_id)
     global $current_user;
     $userID = $current_user->ID;
     
-    $_projectContent = @file_get_contents('https://app.scripted.com/finished_jobs/show/'.$proId.'?content_format=html&business_id='.$_scripted_business_id.'&key='.$apiKey);             
+    $_projectContent = @file_get_contents('https://app.scripted.com/finished_jobs/show/'.$proId.'?content_format=html&token='.$_scripted_business_id.'&key='.$apiKey);             
     $_projectContent = json_decode($_projectContent);
     if($_projectContent->id == $proId) {
         $content = $_projectContent->content;
@@ -246,7 +246,7 @@ function scriptedPojectFinished() {
         die('Failed');
     
     if(wp_verify_nonce($_GET['secure'],'view_project') and $do == 'view_project') {
-        $_projectContent = @file_get_contents($scriptedBaseUrl.'finished_jobs/show/'.$project_id.'?content_format=html&business_id='.$_scripted_business_id.'&key='.$apiKey);             
+        $_projectContent = @file_get_contents($scriptedBaseUrl.'finished_jobs/show/'.$project_id.'?content_format=html&token='.$_scripted_business_id.'&key='.$apiKey);             
         $_projectContent = json_decode($_projectContent);
         
         if($_projectContent->id == $project_id) {
@@ -258,13 +258,13 @@ function scriptedPojectFinished() {
             echo $content;
         }
     }elseif(wp_verify_nonce($_GET['_wpnonce'],'create_reject_accept') and $do == 'Accept') {
-        $_projectAction = @file_get_contents($scriptedBaseUrl.'finished_jobs/update/'.$project_id.'?accepted=true&business_id='.$_scripted_business_id.'&key='.$apiKey);      
+        $_projectAction = @file_get_contents($scriptedBaseUrl.'finished_jobs/update/'.$project_id.'?accepted=true&token='.$_scripted_business_id.'&key='.$apiKey);      
         if($_projectAction)
             echo 'Accepted';
         else
             echo 'Failed';
     }elseif(wp_verify_nonce($_GET['_wpnonce'],'create_reject_accept') and $do == 'Reject') {
-        $_projectAction = @file_get_contents($scriptedBaseUrl.'finished_jobs/update/'.$project_id.'?rejected=true&business_id='.$_scripted_business_id.'&key='.$apiKey);      
+        $_projectAction = @file_get_contents($scriptedBaseUrl.'finished_jobs/update/'.$project_id.'?rejected=true&token='.$_scripted_business_id.'&key='.$apiKey);      
         if($_projectAction)
             echo 'Accepted';
         else
@@ -277,7 +277,7 @@ function scriptedPojectFinished() {
             getFormRequestEditProject($project_id);
         else {
             $chief_complaint = $_POST['chief_complaint'];
-            $url = $scriptedBaseUrl.'finished_jobs/update/'.$project_id.'?&business_id='.$_scripted_business_id.'&key='.$apiKey;
+            $url = $scriptedBaseUrl.'finished_jobs/update/'.$project_id.'?&token='.$_scripted_business_id.'&key='.$apiKey;
             
             if(isset($_POST['chief_complaint']) and $_POST['chief_complaint'] != '') 
                 $url .='&chief_complaint='.urlencode($_POST['chief_complaint']);

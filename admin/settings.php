@@ -102,7 +102,7 @@ You can think of your business_id as your username, and your key as your passwor
 }
 function validateApiKey($apiKey,$businessId)
 {
-   $_currentJobs = @file_get_contents('https://app.scripted.com/jobs?key='.$apiKey.'&business_id='.$businessId); 
+   $_currentJobs = @file_get_contents('https://app.scripted.com/jobs?key='.$apiKey.'&token='.$businessId); 
    return true;
    if($_currentJobs != '') {
         $_currentJobs = json_decode($_currentJobs);
