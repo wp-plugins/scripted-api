@@ -13,7 +13,7 @@ function scripted_create_current_jobs_callback()
             <div class="icon32" style="width:100px;padding-top:5px;" id="icon-scripted"><img src="'.SCRIPTED_LOGO.'"></div><h2>Current Jobs <a class="add-new-h2" href="admin.php?page=scripted_create_a_job">Create a Job</a></h2>';
     
     if($validate) {
-        $_currentJobs = @file_get_contents('https://scripted.com/jobs?key='.$apiKey.'&business_id='.$_scripted_business_id.'&page='.$paged.'&per_page='.$per_page.'&');            
+        $_currentJobs = @file_get_contents('https://app.scripted.com/jobs?key='.$apiKey.'&business_id='.$_scripted_business_id.'&page='.$paged.'&per_page='.$per_page.'&');            
         $_currentJobs = json_decode($_currentJobs);
         
         $totalPagess  = $_currentJobs->total;

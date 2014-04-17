@@ -17,7 +17,7 @@ function scripted_create_finished_jobs_callback()
             <div class="icon32" style="width:100px;padding-top:5px;" id="icon-scripted"><img src="'.SCRIPTED_LOGO.'"></div><h2>Finished Jobs <a class="add-new-h2" href="admin.php?page=scripted_create_a_job">Create a Job</a></h2>';
     
     if($validate) {
-        $_finishedJobs = @file_get_contents('https://scripted.com/finished_jobs?key='.$apiKey.'&business_id='.$_scripted_business_id.'&page='.$paged.'&per_page='.$per_page.$sorting);            
+        $_finishedJobs = @file_get_contents('https://app.scripted.com/finished_jobs?key='.$apiKey.'&business_id='.$_scripted_business_id.'&page='.$paged.'&per_page='.$per_page.$sorting);            
         $_finishedJobs = json_decode($_finishedJobs);        
         
         $totalProjects  = $_finishedJobs->total;
@@ -146,7 +146,7 @@ function createScriptedProject($proId,$apiKey,$_scripted_business_id)
     global $current_user;
     $userID = $current_user->ID;
     
-    $_projectContent = @file_get_contents('https://scripted.com/finished_jobs/show/'.$proId.'?content_format=html&business_id='.$_scripted_business_id.'&key='.$apiKey);             
+    $_projectContent = @file_get_contents('https://app.scripted.com/finished_jobs/show/'.$proId.'?content_format=html&business_id='.$_scripted_business_id.'&key='.$apiKey);             
     $_projectContent = json_decode($_projectContent);
     if($_projectContent->id == $proId) {
         $content = $_projectContent->content;
@@ -158,7 +158,7 @@ function createScriptedProject($proId,$apiKey,$_scripted_business_id)
         $post['post_author']    = $userID;
         $post['post_type']      = 'post';
         $post['post_content']   = $content;
-        $post['post_content']  .= '<p style="font-style:italic; font-size: 10px;">Powered by <a href="https://Scripted.com" alt="Scripted.com content marketing automation">Scripted.com</a></p>';
+        $post['post_content']  .= '<p style="font-style:italic; font-size: 10px;">Powered by <a href="https://app.scripted.com" alt="Scripted.com content marketing automation">Scripted.com</a></p>';
         $post_id                = wp_insert_post($post ,true); // draft created
         echo 'Draft Created!';
         $track_url = 'http://toofr.com/api/track?url='.urlencode(get_permalink($post_id)).'&title='.urlencode($post['post_title']);
@@ -240,7 +240,7 @@ function scriptedPojectFinished() {
     $_scripted_business_id  = get_option( '_scripted_business_id' );    
     $validate               = validateApiKey($apiKey,$_scripted_business_id);
     
-    $scriptedBaseUrl        = 'https://scripted.com/';
+    $scriptedBaseUrl        = 'https://app.scripted.com/';
     
     if(!$validate or $project_id == '' or $do == '') 
         die('Failed');
