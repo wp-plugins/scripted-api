@@ -3,8 +3,8 @@ Contributors: rbucks
 Donate link: 
 Tags: writing, blog posts, twitter, tweet, hire blogger, hire writer, custom content, scripted.com, expert writer, scripted
 Requires at least: 3.3
-Tested up to: 3.7.1
-Stable tag: 0.2.2
+Tested up to: 3.8.3
+Stable tag: 0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,13 +18,13 @@ Founded in 2011, Scripted.com is a leading platform for original, high quality w
 
 1. Upload the `scripted` folder to the `/wp-content/plugins/` directory .
 2. Activate the plugin through the 'Plugins' menu in WordPress.
-3. Create an account at Scripted.com by going here: https://scripted.com/businesses/sign_up
-4. View and copy your API key and business ID here: https://scripted.com/api
+3. Create an account at Scripted.com by going here: https://app.scripted.com/businesses/sign_up
+4. View and copy your API key and business ID here: http://scripted.com/how-it-works/our-api/
 5. Go to your Scripted API settings (see screenshot) and enter it in the Scripted settings page. 
 
 == Frequently asked questions ==
 
-See our frequently asked questions here: [https://Scripted.com/faq](https://Scripted.com/faq)
+See how Scripted works here: [http://scripted.com/how-it-works/](http://scripted.com/how-it-works/)
 
 == Screenshots ==
 
