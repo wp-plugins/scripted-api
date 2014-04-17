@@ -30,7 +30,7 @@ function scripted_create_a_job_callback()
                }
            }
            
-           $urlToSendRequest  = 'https://scripted.com/jobs/create?key='.$apiKey.'&sandbox=false&business_id='.$_scripted_business_id.'&topic='.$topic.$fields;
+           $urlToSendRequest  = 'https://app.scripted.com/jobs/create?key='.$apiKey.'&sandbox=false&token='.$_scripted_business_id.'&topic='.$topic.$fields;
            
            if($format_id!= '')
                $urlToSendRequest .= '&format_id='.$format_id;
@@ -114,7 +114,7 @@ function scripted_create_a_job_callback()
 }
 function getStandardBlogPost($selected ='')
 {
-    $_formateGetUrl = @file_get_contents('https://scripted.com/formats');    
+    $_formateGetUrl = @file_get_contents('https://app.scripted.com/formats');    
     if($_formateGetUrl) {
         $jsonDecoded = json_decode($_formateGetUrl);
 
@@ -132,7 +132,7 @@ function getStandardBlogPost($selected ='')
 }
 function getListIndustryIds($selected ='')
 {
-    $_formateGetUrl = @file_get_contents('https://scripted.com/industries');
+    $_formateGetUrl = @file_get_contents('https://app.scripted.com/industries');
     if($_formateGetUrl) {
         $jsonDecoded = json_decode($_formateGetUrl);
 
@@ -152,7 +152,7 @@ function getListIndustryIds($selected ='')
 }
 function getListGuidelineIds($selected ='')
 {
-    $_formateGetUrl = @file_get_contents('https://scripted.com/guidelines');
+    $_formateGetUrl = @file_get_contents('https://app.scripted.com/guidelines');
     if($_formateGetUrl) {
         $jsonDecoded = json_decode($_formateGetUrl);
 
@@ -219,7 +219,7 @@ function getFormFieldsCallback($postformField = '')
     
     $out = '';
     if((isset($_POST) && wp_verify_nonce($_GET['_wpnonce'],'formfields_project') and $formField !='0') or $postformField!='') {
-        $_formateGetUrl = @file_get_contents('https://scripted.com/formats');    
+        $_formateGetUrl = @file_get_contents('https://app.scripted.com/formats');    
         if($_formateGetUrl) {
             $jsonDecoded = json_decode($_formateGetUrl);
             $out .= '<ul>';
