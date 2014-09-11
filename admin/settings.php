@@ -71,7 +71,7 @@ function scripted_settings_menu_function() {
    $out .='<p>Authentication is required for many functions of the Scripted API. We use token-based authentication.<br />
 You can think of your business_id as your username, and your key as your password.</p>';
    
-   $out .='<p>To get your Business ID and key, please register or log in at Scripted.com, and go to https://Scripted.com/api. Your credentials will show at the top of this page.</p>';
+   $out .='<p>To get your Business ID and key, please send an email to support@scripted.zendesk.com. Thanks!</p>';
             
    $out .='<form action="" method="post" name="scripted_settings">'.wp_nonce_field( 'scriptedFormAuthSettings', '_wpnonce' );
    
