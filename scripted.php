@@ -4,7 +4,7 @@ Plugin Name: Scripted API
 Plugin URI: https://Scripted.com/
 Description: Manage your Scripted account from WordPress!
 Author: Scripted.com
-Version: 0.3.2
+Version: 1.0.1
 Author URI: https://Scripted.com/
 */
 
