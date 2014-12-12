@@ -75,7 +75,7 @@ function scripted_create_a_job_callback()
                         $deadlineAt = '<p>Delivery Time : '.date('M d, Y',$deadlineAt).'</p>';
                         $projectId  = '<p>Project id : '.$response->id.'</p>';
 
-                        echo '<div class="updated" id="message"><p>Congratulations! Your job has been created.</p>'.$projectId.$deadlineAt.'</div>';      
+                        echo '<div class="updated" id="message"><p>Congratulation! Your project has been created.</p>'.$projectId.$deadlineAt.'</div>';      
                         
                     }
             }
@@ -211,15 +211,12 @@ function validateCreateProject($posted) {
         $error .= '<p>Quantity field can not be empty.</p>';
     } else {
         $format_id       = sanitize_text_field($_POST['format_id']);
-        $minimum = 1;
+        $quantity_option = array();
         if($format_id !='') {
             $dataFields = curlRequest('job_templates/'.$format_id);
-            $minimum = $dataFields->content_format->min_quantity;
-        }
-        
-        $options    = array('options'=>array('min_range' =>  $minimum));
-        $quantity   = filter_input(INPUT_POST, 'quantity_order', FILTER_VALIDATE_INT, $options);
-        if(!$quantity) {
+            $quantity_option = $dataFields->content_format->quantity_options;
+        }        
+        if(!in_array($posted['quantity_order'], $dataFields->content_format->quantity_options)) {
             $error .= '<p>Quantity field is not correct.</p>';
         }
     }
@@ -258,7 +255,12 @@ function getFormFieldsCallback($postformField = '')
         if($dataFields) {           
             $out .= '<ul>';
             
-            $out .='<li><label style="width:220px; float:left;">Quantity</label><input style="width:50px;" class="regular-text" type="text" name="quantity_order" value="'.((isset($_POST['quantity_order']) and $_POST['quantity_order'] !='') ? $_POST['quantity_order'] : $dataFields->content_format->min_quantity).'" /><p style="margin-left:220px; font-size:10px;">Minimum Quantity: '.$dataFields->content_format->min_quantity.'</p></li>';
+            $out .='<li><label style="width:220px; float:left;">Quantity</label><select name="quantity_order" class="span3">';
+            foreach($dataFields->content_format->quantity_options as $key => $value) {
+                $out .='<option value="'.$value.'">'.$value.'</option>';
+            }
+            $out .='</select></li>';
+            //$out .='<li><label style="width:220px; float:left;">Quantity</label><input style="width:50px;" class="regular-text" type="text" name="quantity_order" value="'.((isset($_POST['quantity_order']) and $_POST['quantity_order'] !='') ? $_POST['quantity_order'] : $dataFields->content_format->min_quantity).'" /><p style="margin-left:220px; font-size:10px;">Minimum Quantity: '.$dataFields->content_format->min_quantity.'</p></li>';
             
             $fields = $dataFields->prompts;
             foreach($fields as $field) {                

@@ -66,9 +66,10 @@ function scripted_settings_menu_function() {
    $out = '<div class="wrap">
             <div class="icon32" style="width:100px;padding-top:5px;" id="icon-scripted"><img src="'.SCRIPTED_LOGO.'"></div><h2>Settings</h2>';
    
-   $out .='<p>Authentication to the Scripted.com API now uses two factors: an 8 character id, and a 20 character access token. To get your id and token, please follow these two steps:</p>';
+   $out .='<p>Authentication is required for many functions of the Scripted API. We use token-based authentication.<br />
+        You can think of your ID as your username, and your access token as your password.</p>';
    
-   $out .='<ol><li><a href="https://app.scripted.com/businesses/sign_up">Register</a> as a business on Scripted.</li><li>Send an email to wordpress@scripted.com to retrieve your API credentials.</li></ol>';
+   $out .='<p>To get your ID and access token, please register or log in at Scripted.com, and go to https://Scripted.com/api. Your credentials will show at the top of this page.</p>';
             
    $out .='<form action="" method="post" name="scripted_settings">'.wp_nonce_field( 'scriptedFormAuthSettings', '_wpnonce' );
    

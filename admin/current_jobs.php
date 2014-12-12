@@ -18,9 +18,9 @@ function scripted_create_current_jobs_callback()
         
         $totalProjects  = ($allJobs) ? count($allJobs) : 0;
         $totalPages     = ceil($totalProjects/$per_page);
-        
+       
         if($allJobs)
-            $allJobs = array_slice($allJobs, ($paged == 1) ? 0: $paged * $per_page, $per_page);
+            $allJobs = array_slice($allJobs, ($paged == 1) ? 0: ($paged-1) * $per_page, $per_page);
         
         // paggination
         
