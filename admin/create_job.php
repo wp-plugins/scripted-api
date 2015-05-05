@@ -6,6 +6,14 @@ function scripted_create_a_job_callback()
            .form-table select {
                width: 300px;
            }
+           label.left_label {
+                float: left;
+                width: 218px;
+           }
+           p.help_text{
+                  font-size: 10px;
+                  margin-left: 218px;
+           }
        </style>
         <?php
   
@@ -31,12 +39,20 @@ function scripted_create_a_job_callback()
                $fields .= '&job_template[id]='.$format_id;
            
            if(is_array($formFields)) {
-               foreach($formFields as $key => $value) {
-                   $value   = sanitize_text_field($value);
-                   $fields  .= '&job_template[prompts][][id]='.$key;
-                   $fields  .= '&job_template[prompts][][value]='.urlencode($value);
-               }
-           }
+                foreach($formFields as $key => $value) {
+                    $value   = $value;
+
+                    if(is_array($value)) {
+                        foreach ($value as $sub) {    
+                            $fields  .= '&job_template[prompts][][id]='.$key;
+                            $fields  .= '&job_template[prompts][][value][]='.urlencode($sub);
+                        }                            
+                    } else {
+                        $fields  .= '&job_template[prompts][][id]='.$key;
+                        $fields  .= '&job_template[prompts][][value]='.urlencode($value);
+                    }
+                }
+            }  
            
            if($industry_ids!= '')
                $fields .= '&industries[][id]='.$industry_ids;
@@ -51,7 +67,7 @@ function scripted_create_a_job_callback()
            
             $ch = curl_init(); 
             curl_setopt($ch, CURLOPT_HTTPHEADER, array('authorization: Token token='.$accessToken));    
-            curl_setopt($ch, CURLOPT_HEADER, 1);    
+            curl_setopt($ch, CURLOPT_HEADER, false);    
             curl_setopt($ch, CURLOPT_URL, SCRIPTED_END_POINT.'/'.$ID.'/v1/jobs');     
             curl_setopt($ch,CURLOPT_POST,$fieldslength);
             curl_setopt($ch,CURLOPT_POSTFIELDS,$fields);
@@ -61,13 +77,12 @@ function scripted_create_a_job_callback()
             $result = curl_exec($ch);   
             curl_close($ch);
             
+            $response = json_decode($result);
+            
             if ($result === false) {        
                 echo '<div class="updated" id="message"><p>Sorry, we found an error and your Scripted job was not created! Please confirm your ID and Access Token are correct and try again.</p></div>';
             } else {  
                 
-                    list( $header, $contents ) = preg_split( '/([\r\n][\r\n])\\1/', $result, 2 );    
-                    $response = json_decode($contents);
-                    
                     if($response != '' and isset($response->data)) {
                         $success = true;
                         $response   = $response->data;
@@ -107,7 +122,7 @@ function scripted_create_a_job_callback()
         <td>'.getStandardBlogPost((!$success) ? $_POST['format_id'] : '').'</td>
         </tr>
         <tr valign="top">
-        <td colspan="2" id="formfieldsplace">'.@$fields.'</td>
+        <th colspan="2" scope="row" id="formfieldsplace">'.@$fields.'</th>
         </tr>
         <tr valign="top">
         <th scope="row"><label for="api_key">Industries </label></th>
@@ -145,7 +160,7 @@ function getStandardBlogPost($selected ='')
             $class = '';
             if($selected !='' and $selected == $jobT->id) 
                 $class = 'selected="selected"';
-            $out .='<option value="'.$jobT->id.'" '.$class.'>'.$jobT->name.' for $'.$jobT->content_format->price.'</option>';
+            $out .='<option value="'.$jobT->id.'" '.$class.'>'.$jobT->name.' for $'.($jobT->pricing->base/100).'</option>';
         }
         $out .='</select>';
         return $out;
@@ -204,9 +219,6 @@ function validateCreateProject($posted) {
     if(isset($posted['topic']) and $posted['topic'] =='') {
         $error .= '<p>Topic field can not be empty.</p>';
     }
-    if(isset($posted['topic']) and $posted['topic'] =='') {
-        $error .= '<p>Topic field can not be empty.</p>';
-    }
     if(isset($posted['quantity_order']) and $posted['quantity_order'] =='') {
         $error .= '<p>Quantity field can not be empty.</p>';
     } else {
@@ -255,16 +267,58 @@ function getFormFieldsCallback($postformField = '')
         if($dataFields) {           
             $out .= '<ul>';
             
-            $out .='<li><label style="width:220px; float:left;">Quantity</label><select name="quantity_order" class="span3">';
+            $out .='<li><label class="left_label">Quantity</label><select name="quantity_order" class="span3">';
             foreach($dataFields->content_format->quantity_options as $key => $value) {
-                $out .='<option value="'.$value.'">'.$value.'</option>';
-            }
+                    $out .='<option value="'.$value.'">'.$value.'</option>';
+                }
             $out .='</select></li>';
             //$out .='<li><label style="width:220px; float:left;">Quantity</label><input style="width:50px;" class="regular-text" type="text" name="quantity_order" value="'.((isset($_POST['quantity_order']) and $_POST['quantity_order'] !='') ? $_POST['quantity_order'] : $dataFields->content_format->min_quantity).'" /><p style="margin-left:220px; font-size:10px;">Minimum Quantity: '.$dataFields->content_format->min_quantity.'</p></li>';
             
             $fields = $dataFields->prompts;
-            foreach($fields as $field) {                
-                    $out .='<li><label style="width:220px; float:left;">'.$field->label.'</label><textarea name="form_fields['.$field->id.']" cols="48" rows="5" class="span3">'.@$_POST['form_fields'][$field->id].'</textarea><p style="margin-left:220px; font-size:10px;">'.$field->description.'</p></li>';                
+            foreach($fields as $field) {
+                
+                    $required = (isset($field->answer_required) and $field->answer_required == 1) ? '*':'';
+                
+                    if($field->kind == 'checkbox') {    
+                        $oldValue = (isset($_POST['form_fields'][$field->id])) ? $_POST['form_fields'][$field->id] : array();   
+                        $out .='<li><label class="left_label">'.$field->label.$required.'</label><div style="float:left">';
+                        foreach ($field->value_options as $optionValue) {
+                                $class = '';
+                                if(in_array($optionValue, $oldValue))
+                                    $class = 'checked';
+                            $out .='<label><input '.$class.' name="form_fields['.$field->id.'][]" type="checkbox" value="'.$optionValue.'">'.$optionValue.'</label><br />';
+                        }
+                        
+                        $out .='</div><div style="clear:both"></div><p class="help_text">'.$field->description.'</p></li>';
+                        
+                    } else if($field->kind == 'radio') {
+                        $oldValue = (isset($_POST['form_fields'][$field->id])) ? $_POST['form_fields'][$field->id] : '';   
+                        $out .='<li><label class="left_label">'.$field->label.$required.'</label><div style="float:left">';
+                        foreach ($field->value_options as $optionValue) {
+                            $class = '';
+                                if($optionValue == $oldValue)
+                                    $class = 'checked';
+                            $out .='<label><input '.$class.' name="form_fields['.$field->id.']" type="radio" value="'.$optionValue.'">'.$optionValue.'</label><br />';
+                        }
+                        
+                        $out .='</div><div style="clear:both"></div><p class="help_text">'.$field->description.'</p></li>';
+                        
+                    } else if(strpos($field->kind, 'string[255]') !== false) {
+                        $out .='<li><label class="left_label">'.$field->label.$required.'</label>'
+                           . '<input name="form_fields['.$field->id.']" type="text" class="span3" value="'.@$_POST['form_fields'][$field->id].'">'
+                           . '<p class="help_text">'.$field->description.'</p></li>';
+                        
+                    } else if(strpos($field->kind, 'string[1024]') !== false) {
+                        $out .='<li><label class="left_label">'.$field->label.$required.'</label>'
+                           . '<textarea name="form_fields['.$field->id.']" cols="48" rows="5" class="span3">'.@$_POST['form_fields'][$field->id].'</textarea>'
+                           . '<p class="help_text">'.$field->description.'</p></li>';             
+                    } else if(strpos($field->kind, 'array') !== false) {
+                        $out .='<li><label class="left_label">'.$field->label.$required.'</label>'
+                           . '<textarea name="form_fields['.$field->id.']" cols="48" rows="5" class="span3">'.@$_POST['form_fields'][$field->id].'</textarea>'
+                           . '<p class="help_text">'.$field->description.'</p></li>';             
+                    }
+                    
+                       
             }
             
             $out .= '<li>';
