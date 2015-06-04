@@ -66,10 +66,10 @@ function scripted_create_current_jobs_callback()
                     <thead>
                         <tr>
                         <th scope="col" width="40%"><span>Topic</span></th>
-                        <th scope="col" width="15%"><span>Quantity</span></th>
-                        <th scope="col" width="15%"><span>State</span></th>
+                        <th scope="col" width="10%"><span>Quantity</span></th>
+                        <th scope="col" width="10%"><span>State</span></th>
                         <th scope="col" width="15%"><span>Deadline</span></th>
-                        <th scope="col" width="15%"></th>
+                        <th scope="col" width="23%"></th>
                         </tr>
                     </thead>
                       <tbody>';
@@ -93,6 +93,7 @@ function scripted_create_current_jobs_callback()
                         $out .= '<a id="reject_'.$job->id.'"  href="javascript:void(0)" onclick="finishedProjectActions(\''.$job->id.'\',\'Reject\')">Reject</a>';
                     }elseif ($job->state == 'accepted') {
                         $out .= '<a id="create_'.$job->id.'" href="javascript:void(0)"  onclick="finishedProjectActions(\''.$job->id.'\',\'Create\')">Create Draft</a> | ';
+                        $out .= '<a id="post_'.$job->id.'" href="javascript:void(0)"  onclick="finishedProjectActions(\''.$job->id.'\',\'Post\')">Create Post</a> | ';
                         $out .= '<a href="'.admin_url('admin-ajax.php').'?action=scripted_poject_finished&do=view_project&project_id='.$job->id.'&secure='.wp_create_nonce('view_project').'&amp;type=page&amp;TB_iframe=1&amp;width=850&amp;height=500" class="thickbox" title="'.strip_tags(substr($job->topic,0,50)).'">View</a>';
                     }
                     $out .='</td>';
@@ -118,7 +119,7 @@ function scripted_create_current_jobs_callback()
     
     echo $out;
 }
-function createScriptedProject($proId,$ID,$accessToken)
+function createScriptedProject($proId,$ID,$accessToken,$type = 'draft')
 {
     global $current_user;
     $userID = $current_user->ID;
@@ -130,14 +131,20 @@ function createScriptedProject($proId,$ID,$accessToken)
         if(is_array($content)) {
             $content = $content[0];
         }
+        $success_message = 'Draft Created!';
         $post['post_title']     = wp_strip_all_tags($_projectJob->topic);
-        $post['post_status']    = 'draft';
+        if($type == 'draft')
+            $post['post_status']    = 'draft';
+        elseif($type == 'publish') {
+            $post['post_status']    = 'publish';
+            $success_message = 'Post Published!';
+        }
         $post['post_author']    = $userID;
         $post['post_type']      = 'post';
         $post['post_content']   = $content;
         $post['post_content']  .= '<p style="font-style:italic; font-size: 10px;">Powered by <a href="https://app.scripted.com" alt="Scripted.com content marketing automation">Scripted.com</a></p>';
         $post_id                = wp_insert_post($post ,true); // draft created
-        echo 'Draft Created!';
+        echo $success_message;
         $track_url = 'http://toofr.com/api/track?url='.urlencode(get_permalink($post_id)).'&title='.urlencode($post['post_title']);
         @file_get_contents($track_url);
     } else {
@@ -157,6 +164,8 @@ function createProjectAjax()
                 jQuery("#reject_"+proId).html('Rejecting...'); 
            else if(actions == 'Create')
                 jQuery("#create_"+proId).html('Creating...'); 
+           else if(actions == 'Post')
+                jQuery("#post_"+proId).html('Creating Post...'); 
                 
             jQuery.ajax({
                     type: 'POST',
@@ -169,6 +178,8 @@ function createProjectAjax()
                             jQuery("#reject_"+proId).html(data); 
                        else if(actions == 'Create')
                             jQuery("#create_"+proId).html(data); 
+                       else if(actions == 'Post')
+                            jQuery("#post_"+proId).html(data); 
                     }
                 });
        }
@@ -223,6 +234,8 @@ function scriptedPojectFinished() {
             echo 'Failed';
     }elseif(wp_verify_nonce($_GET['_wpnonce'],'create_reject_accept') and $do == 'Create') {
         createScriptedProject($project_id,$ID,$accessToken);
+    }elseif(wp_verify_nonce($_GET['_wpnonce'],'create_reject_accept') and $do == 'Post') {
+        createScriptedProject($project_id,$ID,$accessToken,'publish');
     }elseif(wp_verify_nonce($_GET['secure'],'request_edit') and $do == 'request_edit') {
         
         if(empty($_POST))
