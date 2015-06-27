@@ -33,7 +33,7 @@ function scripted_admin_styles() {
 }
 
 function scripted_settings_menu() {
-   add_menu_page('Scripted Settings', 'Settings', 'add_users','scripted_settings_menu', 'scripted_settings_menu_function', SCRIPTED_ICON, 83);
+   add_menu_page('Scripted Settings', 'Scripted.com', 'add_users','scripted_settings_menu', 'scripted_settings_menu_function', SCRIPTED_ICON, 83);
    
     $ID               = get_option( '_scripted_ID' );
     $accessToken      = get_option( '_scripted_auccess_tokent' );
