@@ -362,8 +362,10 @@ function curlRequest($type,$post = false,$fields = '') {
     
     list( $header, $contents ) = preg_split( '/([\r\n][\r\n])\\1/', $result, 2 ); // extracting
     if($contents != '') {
-        $contents = json_decode($contents);        
+        $contents = json_decode($contents);    
         if(isset($contents->data) and count($contents->data) > 0) {
+            if(isset($contents->total_count))
+                return $contents;
             return $contents->data;
         }
     }
