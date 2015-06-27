@@ -8,12 +8,12 @@ add_action( 'admin_notices', 'scripted_install_warning' );
  * @since 1.0
  */
 function scripted_install_warning() {
-	$apiKey                  = get_option( '_scripted_api_key' );
-        $_scripted_business_id   = get_option( '_scripted_business_id' );
+	$ID               = get_option( '_scripted_ID' );
+        $accessToken      = get_option( '_scripted_auccess_tokent' );
 
 	$page = (isset($_GET['page']) ? $_GET['page'] : null);
 
-	if ((empty($apiKey)  || empty($_scripted_business_id)) && $page != 'scripted_settings_menu' && current_user_can( 'manage_options' ) ) {
+	if ((empty($ID)  || empty($accessToken)) && $page != 'scripted_settings_menu' && current_user_can( 'manage_options' ) ) {
 		admin_dialog( sprintf( 'You must %sconfigure the plugin%s to enable Scripted for WordPress.', '<a href="admin.php?page=scripted_settings_menu">', '</a>' ), true);
 	}
 }
@@ -27,54 +27,64 @@ function admin_dialog($message, $error = false) {
 	
 	echo '<div ' . ( $error ? 'id="scripted_warning" ' : '') . 'class="' . $class . ' fade' . '"><p>'. $message . '</p></div>';
 }
+function scripted_admin_styles() {
+    wp_register_style( 'scripteAdminStyle', plugins_url('admin/scripts/scripted.css', SCRIPTED_FILE_URL) );
+    wp_enqueue_style( 'scripteAdminStyle' );
+}
+
 function scripted_settings_menu() {
-   add_menu_page('scripted_settings', 'Settings', 'add_users','scripted_settings_menu', 'scripted_settings_menu_function', SCRIPTED_ICON, 83);
+   add_menu_page('Scripted Settings', 'Scripted.com', 'add_users','scripted_settings_menu', 'scripted_settings_menu_function', SCRIPTED_ICON, 83);
    
-   $apiKey                  = get_option( '_scripted_api_key' );
-   $_scripted_business_id  = get_option( '_scripted_business_id' );
+    $ID               = get_option( '_scripted_ID' );
+    $accessToken      = get_option( '_scripted_auccess_tokent' );
     
-    if($apiKey != '' and $_scripted_business_id !='') {
+    if($ID != '' and $accessToken !='') {
 	$createAJobPage = add_submenu_page( 'scripted_settings_menu', 'Create a Job', 'Create a Job', 'manage_options', 'scripted_create_a_job', 'scripted_create_a_job_callback' ); 
         add_action( 'admin_footer-'. $createAJobPage, 'getFormFields' );
-        add_submenu_page( 'scripted_settings_menu', 'Current Jobs', 'Current Jobs', 'manage_options', 'scripted_create_current_jobs', 'scripted_create_current_jobs_callback' );
-        $finishedPage = add_submenu_page( 'scripted_settings_menu', 'Finished Jobs', 'Finished Jobs', 'manage_options', 'scripted_create_finished_jobs', 'scripted_create_finished_jobs_callback' );
-        add_action( 'admin_footer-'. $finishedPage, 'createProjectAjax' );
+        $currentJobPage = add_submenu_page( 'scripted_settings_menu', 'Current Jobs', 'Jobs', 'manage_options', 'scripted_create_current_jobs', 'scripted_create_current_jobs_callback' );
+        
+        // javascript functions
+        add_action( 'admin_footer-'. $currentJobPage, 'createProjectAjax' );
+        
+        //adding style sheet to admin pages
+        add_action( 'admin_print_styles-' . $createAJobPage, 'scripted_admin_styles' );
+        add_action( 'admin_print_styles-' . $currentJobPage, 'scripted_admin_styles' );
     }
 }
 function scripted_settings_menu_function() {
     
   if(isset($_POST) && wp_verify_nonce($_POST['_wpnonce'],'scriptedFormAuthSettings')) {        
       
-      $validate = validateApiKey($_POST['_scripted_api_key'],$_POST['_scripted_business_id']);
+        $validate = validateApiKey($_POST['ID_text'],$_POST['success_tokent_text']);
         if($validate) {
-            update_option( '_scripted_api_key', sanitize_text_field($_POST['_scripted_api_key']) );        
-            update_option( '_scripted_business_id', sanitize_text_field($_POST['_scripted_business_id'] ));        
+            update_option( '_scripted_ID', sanitize_text_field($_POST['ID_text']) );        
+            update_option( '_scripted_auccess_tokent', sanitize_text_field($_POST['success_tokent_text'] ));        
         } else {
-            echo '<div class="updated" id="message"><p>Sorry, we found an error. Please confirm your API key and Business ID are correct and try again.</p></div>';
+            echo '<div class="updated" id="message"><p>Sorry, we found an error. Please confirm your ID and Access Token are correct and try again.</p></div>';
         }
     }
    $out = '<div class="wrap">
             <div class="icon32" style="width:100px;padding-top:5px;" id="icon-scripted"><img src="'.SCRIPTED_LOGO.'"></div><h2>Settings</h2>';
    
    $out .='<p>Authentication is required for many functions of the Scripted API. We use token-based authentication.<br />
-You can think of your business_id as your username, and your key as your password.</p>';
+        You can think of your ID as your username, and your access token as your password.</p>';
    
-   $out .='<p>To get your Business ID and key, please register or log in at Scripted.com, and go to https://Scripted.com/api. Your credentials will show at the top of this page.</p>';
+   $out .='<p>To get your ID and access token, please register or log in at Scripted.com, and go to https://Scripted.com/api. Your credentials will show at the top of this page.</p>';
             
    $out .='<form action="" method="post" name="scripted_settings">'.wp_nonce_field( 'scriptedFormAuthSettings', '_wpnonce' );
    
-   $apiKey                  = get_option( '_scripted_api_key' );
-   $_scripted_business_id   = get_option( '_scripted_business_id' );
+   $ID               = get_option( '_scripted_ID' );
+   $accessToken      = get_option( '_scripted_auccess_tokent' );
    
    $out .='<table class="form-table">
       <tbody>
         <tr valign="top">
-          <th scope="row"><label for="api_key">API Key</label></th>
-          <td><input type="text" class="regular-text" value="'.$apiKey.'" id="_scripted_api_key" name="_scripted_api_key"></td>
+          <th scope="row"><label for="ID_text">ID</label></th>
+          <td><input type="text" class="regular-text" value="'.$ID.'" id="ID_text" name="ID_text"></td>
         </tr>
         <tr valign="top">
-          <th scope="row"><label for="business_id">Business Id</label></th>
-          <td><input type="text" class="regular-text" value="'.$_scripted_business_id.'" id="_scripted_business_id" name="_scripted_business_id"></td>
+          <th scope="row"><label for="success_tokent_text">Access Token</label></th>
+          <td><input type="text" class="regular-text" value="'.$accessToken.'" id="success_tokent_text" name="success_tokent_text"></td>
         </tr>
      </tbody>
     </table>
@@ -88,12 +98,27 @@ You can think of your business_id as your username, and your key as your passwor
    $out .='</div>';// end of wrap div
    echo $out;
 }
-function validateApiKey($apiKey,$businessId)
+function validateApiKey($ID,$accessToken)
 {
-   $_currentJobs = @file_get_contents('https://scripted.com/jobs?key='.$apiKey.'&business_id='.$businessId); 
-   if($_currentJobs != '') {
-        $_currentJobs = json_decode($_currentJobs);
-        if(isset($_currentJobs->total)) {
+    
+    $ch = curl_init(); 
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('authorization: Token token='.$accessToken));    
+    curl_setopt($ch, CURLOPT_HEADER, 1);    
+    curl_setopt($ch, CURLOPT_URL, SCRIPTED_END_POINT.'/'.$ID.'/v1/industries/');     
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+    curl_setopt($ch, CURLOPT_POST, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+    $result = curl_exec($ch);     
+    curl_close($ch);
+    
+    if ($result === false) {        
+        return false;
+    }    
+    list( $header, $contents ) = preg_split( '/([\r\n][\r\n])\\1/', $result, 2 );    
+    $industries = json_decode($contents);  
+   if($contents != '') {
+        if(isset($industries->data) and count($industries->data) > 0) {
             return true;
         }
    }
