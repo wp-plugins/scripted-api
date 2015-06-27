@@ -33,19 +33,21 @@ function scripted_admin_styles() {
 }
 
 function scripted_settings_menu() {
-   add_menu_page('Scripted Settings', 'Scripted', 'add_users','scripted_settings_menu', 'scripted_settings_menu_function', SCRIPTED_ICON, 83);
+   add_menu_page('Scripted Settings', 'Settings', 'add_users','scripted_settings_menu', 'scripted_settings_menu_function', SCRIPTED_ICON, 83);
    
     $ID               = get_option( '_scripted_ID' );
     $accessToken      = get_option( '_scripted_auccess_tokent' );
     
     if($ID != '' and $accessToken !='') {
-
+	$createAJobPage = add_submenu_page( 'scripted_settings_menu', 'Create a Job', 'Create a Job', 'manage_options', 'scripted_create_a_job', 'scripted_create_a_job_callback' ); 
+        add_action( 'admin_footer-'. $createAJobPage, 'getFormFields' );
         $currentJobPage = add_submenu_page( 'scripted_settings_menu', 'Current Jobs', 'Jobs', 'manage_options', 'scripted_create_current_jobs', 'scripted_create_current_jobs_callback' );
         
         // javascript functions
         add_action( 'admin_footer-'. $currentJobPage, 'createProjectAjax' );
         
         //adding style sheet to admin pages
+        add_action( 'admin_print_styles-' . $createAJobPage, 'scripted_admin_styles' );
         add_action( 'admin_print_styles-' . $currentJobPage, 'scripted_admin_styles' );
     }
 }

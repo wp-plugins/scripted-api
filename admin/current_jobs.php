@@ -11,7 +11,7 @@ function scripted_create_current_jobs_callback()
     $per_page         = 15;    
     $validate = validateApiKey($ID,$accessToken);    
     $out = '<div class="wrap">
-            <div class="icon32" style="width:100px;padding-top:5px;" id="icon-scripted"><img src="'.SCRIPTED_LOGO.'"></div><h2>Jobs</h2>';
+            <div class="icon32" style="width:100px;padding-top:5px;" id="icon-scripted"><img src="'.SCRIPTED_LOGO.'"></div><h2>Current Jobs <a class="add-new-h2" href="admin.php?page=scripted_create_a_job">Create a Job</a></h2>';
     
     if($validate) {
         $url = ($paged != '') ? 'jobs?next_cursor='.$paged : 'jobs/';
